@@ -1,4 +1,4 @@
-FROM node:19
+FROM node:20.8.0
 
 ADD . /apps
 
@@ -8,10 +8,8 @@ ENV NODE_ENV production
 
 RUN npm install
 
-RUN npm run build
-
 RUN rm Dockerfile
 
 EXPOSE 3000
 
-CMD [ "npm" , "run", "start" ]
+CMD [ "npm" , "run", "dev" ]
