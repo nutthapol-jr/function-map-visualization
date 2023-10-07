@@ -6,12 +6,7 @@ const Timeseries: StyleSpecification = {
   sources: {
     "google-satellite": {
       type: "raster",
-      tiles: [
-        "http://mt0.google.com/vt/lyrs=s&hl=pl&&x={x}&y={y}&z={z}",
-        "http://mt1.google.com/vt/lyrs=s&hl=pl&&x={x}&y={y}&z={z}",
-        "http://mt2.google.com/vt/lyrs=s&hl=pl&&x={x}&y={y}&z={z}",
-        "http://mt3.google.com/vt/lyrs=s&hl=pl&&x={x}&y={y}&z={z}",
-      ],
+      tiles: ["https://tile.openstreetmap.org/{z}/{x}/{y}.png"],
       tileSize: 256,
     },
     "ortho-2022": {
