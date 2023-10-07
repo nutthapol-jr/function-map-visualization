@@ -1,0 +1,44 @@
+version: '3.9'
+
+volumes:
+   geoserver-data:
+   geo-db-data:
+
+services:
+   db:
+      image: kartoza/postgis:15-3.4
+      volumes:
+        - geo-db-data:/var/lib/postgresql
+      ports:
+        - 5432:5432
+      environment:
+        - POSTGRES_DB=gis
+        - POSTGRES_USER=cu_admin
+        - POSTGRES_PASS=icBdUEAVz3yxNZsYJa2FvEAXrU9g6m
+        - ALLOW_IP_RANGE=0.0.0.0/0
+        - POSTGRES_MULTIPLE_EXTENSIONS=postgis,hstore,postgis_topology,postgis_raster,pgrouting
+      restart: on-failure
+      healthcheck:
+        test: "PGPASSWORD=icBdUEAVz3yxNZsYJa2FvEAXrU9g6m pg_isready -h 127.0.0.1 -U cu_admin -d gis"
+
+   geoserver:
+      image: kartoza/geoserver:2.23.2
+      volumes:
+        - geoserver-data:/opt/geoserver/data_dir
+      ports:
+        - 8080:8080
+      restart: on-failure
+      environment:
+        - GEOWEBCACHE_CACHE_DIR=/opt/geoserver/data_dir/gwc
+        - GEOSERVER_ADMIN_PASSWORD=icBdUEAVz3yxNZsYJa2FvEAXrU9g6m
+        - GEOSERVER_ADMIN_USER=cu_admin
+        - INITIAL_MEMORY=2G
+        - MAXIMUM_MEMORY=4G
+      depends_on:
+        db:
+          condition: service_healthy
+      healthcheck:
+        test: "curl --fail --silent --write-out 'HTTP CODE : %{http_code}\n' --output /dev/null -u cu_admin:'icBdUEAVz3yxNZsYJa2FvEAXrU9g6m' http://localhost:8080/geoserver/rest/about/version.xml"
+        interval: 1m30s
+        timeout: 10s
+        retries: 3
